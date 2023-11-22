@@ -47,7 +47,7 @@ fun ContactScreen(
             }
         },
         modifier = Modifier.padding(16.dp)
-    ) { padding ->
+    ) { _ ->
         if (state.isAddingContact){
             AddContactDialog(state = state, onEvent = onEvent)
         }

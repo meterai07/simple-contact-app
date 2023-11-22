@@ -28,7 +28,7 @@ fun AddContactDialog (
         onDismissRequest = {
             onEvent(ContactRepository.HideDialog)
         },
-        title = { Text(text = "Add COntact") },
+        title = { Text(text = "Add Contact") },
         text = {
             Column (
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -45,7 +45,7 @@ fun AddContactDialog (
                 TextField(
                     value = state.phoneNumber,
                     onValueChange = {
-                        onEvent(ContactRepository.SetName(it))
+                        onEvent(ContactRepository.SetPhoneNumber(it))
                     },
                     placeholder = {
                         Text(text = "Phone Number")

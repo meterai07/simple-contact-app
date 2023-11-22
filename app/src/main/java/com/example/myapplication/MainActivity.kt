@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         Room.databaseBuilder(
             applicationContext,
             ContactDatabase::class.java,
-            "contact-database"
+            "contacts.db"
         ).build()
     }
     private val viewModel by viewModels<ContactViewModel>(
