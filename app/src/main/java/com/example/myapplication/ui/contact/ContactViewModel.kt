@@ -4,9 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.data.contact.Contact
 import com.example.myapplication.data.contact.ContactDao
-import com.example.myapplication.data.contact.ContactRepository
+import com.example.myapplication.data.contact.ContactEvent
 import com.example.myapplication.data.contact.ContactState
 import com.example.myapplication.util.SortType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ContactViewModel(
@@ -38,19 +40,19 @@ class ContactViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ContactState())
 
-    fun onEvent(event: ContactRepository) {
+    fun onEvent(event: ContactEvent) {
         when(event) {
-            is ContactRepository.DeleteContacts -> {
+            is ContactEvent.DeleteContacts -> {
                 viewModelScope.launch {
                     dao.deleteContact(event.contact)
                 }
             }
-            ContactRepository.HideDialog -> {
+            ContactEvent.HideDialog -> {
                 _state.update { it.copy(
                     isAddingContact = false
                 ) }
             }
-            ContactRepository.SaveContact -> {
+            ContactEvent.SaveContact -> {
                 val name = state.value.name
                 val phoneNumber = state.value.phoneNumber
 
@@ -73,22 +75,22 @@ class ContactViewModel(
                     phoneNumber = ""
                 ) }
             }
-            is ContactRepository.SetName -> {
+            is ContactEvent.SetName -> {
                 _state.update { it.copy(
                     name = event.name
                 ) }
             }
-            is ContactRepository.SetPhoneNumber -> {
+            is ContactEvent.SetPhoneNumber -> {
                 _state.update { it.copy(
                     phoneNumber = event.phoneNumber
                 ) }
             }
-            ContactRepository.ShowDialog -> {
+            ContactEvent.ShowDialog -> {
                 _state.update { it.copy(
                     isAddingContact = true
                 ) }
             }
-            is ContactRepository.SortContacts -> {
+            is ContactEvent.SortContacts -> {
                 _sortType.value = event.sortType
             }
         }

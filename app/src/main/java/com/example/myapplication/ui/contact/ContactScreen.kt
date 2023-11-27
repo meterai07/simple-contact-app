@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.contact
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,9 +28,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.myapplication.data.contact.ContactRepository
+import com.example.myapplication.data.contact.ContactEvent
 import com.example.myapplication.data.contact.ContactState
 import com.example.myapplication.util.SortType
 
@@ -36,12 +39,12 @@ import com.example.myapplication.util.SortType
 @Composable
 fun ContactScreen(
     state: ContactState,
-    onEvent: (ContactRepository) -> Unit
+    onEvent: (ContactEvent) -> Unit
 ) {
     Scaffold (
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                onEvent(ContactRepository.ShowDialog)
+                onEvent(ContactEvent.ShowDialog)
             }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
             }
@@ -61,20 +64,24 @@ fun ContactScreen(
                 Row (
                     modifier = Modifier
                         .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
+                        .horizontalScroll(rememberScrollState()).border(
+                            width = 1.dp,
+                            color = Color.Gray,
+                            shape = MaterialTheme.shapes.small
+                        ),
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     SortType.values().forEach { sortType ->
                         Row (
                             modifier = Modifier.clickable{
-                                onEvent(ContactRepository.SortContacts(sortType))
+                                onEvent(ContactEvent.SortContacts(sortType))
                             },
                             verticalAlignment = CenterVertically
                         ) {
                             RadioButton(
                                 selected = state.sortType == sortType,
                                 onClick = {
-                                    onEvent(ContactRepository.SortContacts(sortType))
+                                    onEvent(ContactEvent.SortContacts(sortType))
                                 }
                             )
                             Text(text = sortType.name)
@@ -82,6 +89,7 @@ fun ContactScreen(
                     }
                 }
             }
+
             items(state.contacts) { contact ->
                 Row (
                     modifier = Modifier.fillMaxWidth()
@@ -95,11 +103,11 @@ fun ContactScreen(
                         )
                         Text(
                             text = "${contact.phoneNumber}",
-                            fontSize = 12.sp
+                            fontSize = 12.sp,
                         )
                     }
                     IconButton(onClick = {
-                        onEvent(ContactRepository.DeleteContacts(contact))
+                        onEvent(ContactEvent.DeleteContacts(contact))
                     }) {
                         Icon(
                             imageVector = Icons.Default.Delete,

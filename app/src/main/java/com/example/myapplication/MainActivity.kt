@@ -18,6 +18,7 @@ import com.example.myapplication.data.contact.ContactDatabase
 import com.example.myapplication.ui.contact.ContactScreen
 import com.example.myapplication.ui.contact.ContactViewModel
 import com.example.myapplication.ui.theme.MyApplicationTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 class MainActivity : ComponentActivity() {
     private val db by lazy {
