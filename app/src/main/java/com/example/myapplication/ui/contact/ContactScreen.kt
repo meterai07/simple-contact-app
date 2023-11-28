@@ -1,34 +1,34 @@
 package com.example.myapplication.ui.contact
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.data.contact.ContactEvent
@@ -41,48 +41,71 @@ fun ContactScreen(
     state: ContactState,
     onEvent: (ContactEvent) -> Unit
 ) {
-    Scaffold (
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Contact App",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF3687D9),
+                        textAlign = TextAlign.Start,
+                    )
+                },
+            )
+        },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                onEvent(ContactEvent.ShowDialog)
-            }) {
+            FloatingActionButton(
+                modifier = Modifier,
+                onClick = { onEvent(ContactEvent.ShowDialog) },
+                containerColor = Color(0xFF3687D9),
+                contentColor = Color.White,
+                shape = RoundedCornerShape(50)
+            ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
             }
         },
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.background(color = Color(0xFFFAFAFA))
     ) { _ ->
-        if (state.isAddingContact){
+        if (state.isAddingContact) {
             AddContactDialog(state = state, onEvent = onEvent)
         }
 
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            item {
-                Row (
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()).border(
-                            width = 1.dp,
-                            color = Color.Gray,
-                            shape = MaterialTheme.shapes.small
-                        ),
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    SortType.values().forEach { sortType ->
-                        Row (
-                            modifier = Modifier.clickable{
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(top = 56.dp, bottom = 24.dp)
+                    .border(
+                        width = 1.dp,
+                        color = Color.LightGray,
+                        shape = MaterialTheme.shapes.small
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                SortType.values().forEach { sortType ->
+                    Box(
+                        modifier = Modifier
+                            .clickable {
                                 onEvent(ContactEvent.SortContacts(sortType))
-                            },
-                            verticalAlignment = CenterVertically
+                            }
+                            .padding(top = 8.dp, bottom = 8.dp, end = 16.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             RadioButton(
                                 selected = state.sortType == sortType,
                                 onClick = {
                                     onEvent(ContactEvent.SortContacts(sortType))
-                                }
+                                },
                             )
                             Text(text = sortType.name)
                         }
@@ -90,30 +113,49 @@ fun ContactScreen(
                 }
             }
 
-            items(state.contacts) { contact ->
-                Row (
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column (
-                        modifier = Modifier.weight(1f)
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                items(state.contacts) { contact ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text =  "${contact.name}",
-                            fontSize = 20.sp
-                        )
-                        Text(
-                            text = "${contact.phoneNumber}",
-                            fontSize = 12.sp,
-                        )
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = "${contact.name}",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = "${contact.phoneNumber}",
+                                fontSize = 14.sp,
+                                color = Color.Gray,
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                onEvent(ContactEvent.DeleteContacts(contact))
+                            },
+                            colors = IconButtonDefaults.iconButtonColors(contentColor = Color.Red)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete",
+                            )
+                        }
                     }
-                    IconButton(onClick = {
-                        onEvent(ContactEvent.DeleteContacts(contact))
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete"
-                        )
-                    }
+
+                    Divider(
+                        color = Color.LightGray,
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp)
+                    )
                 }
             }
         }
