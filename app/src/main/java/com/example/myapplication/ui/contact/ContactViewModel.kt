@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ContactViewModel(
+class ContactViewModel (
     private val dao: ContactDao
 ):ViewModel() {
     private val _sortType = MutableStateFlow(SortType.NAME)
@@ -49,7 +49,9 @@ class ContactViewModel(
             }
             ContactEvent.HideDialog -> {
                 _state.update { it.copy(
-                    isAddingContact = false
+                    isAddingContact = false,
+                    name = "",
+                    phoneNumber = ""
                 ) }
             }
             ContactEvent.SaveContact -> {

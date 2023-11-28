@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -60,7 +62,7 @@ fun AddContactDialog (
                             androidx.compose.material3.Icon(imageVector = Icons.Filled.Person, contentDescription = "Person Icon")
                         }
                     },
-                    singleLine = true
+                    singleLine = true,
                 )
                 OutlinedTextField(
                     value = state.phoneNumber,
@@ -73,19 +75,29 @@ fun AddContactDialog (
                     label = {
                         Text(text = "Phone Number")
                     },
-                    maxLines = 1,
                     leadingIcon = {
                         IconButton(onClick = { /*TODO*/ }) {
                             androidx.compose.material3.Icon(imageVector = Icons.Filled.Phone, contentDescription = "Person Icon")
                         }
                     },
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
             }
         },
+        dismissButton = {
+            Box(
+                contentAlignment = Alignment.CenterStart,
+            ) {
+                Button(onClick = {
+                    onEvent(ContactEvent.HideDialog)
+                }) {
+                    Text(text = "Cancel")
+                }
+            }
+        },
         confirmButton = {
             Box(
-                modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.CenterEnd
             ) {
                 Button(onClick = {
